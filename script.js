@@ -146,3 +146,75 @@ const imgObserver = new IntersectionObserver(lazyLoadingFunc, {
 });
 
 lazyImg.forEach(img => imgObserver.observe(img));
+
+// Testimonial Slider
+const Slider = document.querySelector('.slider');
+const slides = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+const dotsContainer = document.querySelector('.dots');
+
+// default Index
+let curSlideIndex = 0;
+const totalSlides = slides.length;
+
+// produce slides movement
+const slideEngine = function (slide) {
+  slides.forEach(
+    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
+  );
+};
+slideEngine(0);
+
+// Slider Dots Creating
+const createDots = function () {
+  slides.forEach(function (_, i) {
+    dotsContainer.insertAdjacentHTML(
+      'beforeend',
+      `<button class="dots__dot" data-slide="${i}"></button>`
+    );
+  });
+};
+createDots();
+
+// shows dots with slides
+const activateDots = function (slide) {
+  document
+    .querySelectorAll('.dots__dot')
+    .forEach(dot => dot.classList.remove('dots__dot--active'));
+  document
+    .querySelector(`.dots__dot[data-slide="${slide}"]`)
+    .classList.add('dots__dot--active');
+};
+activateDots(0);
+
+// Next Slide
+const nextSlide = function () {
+  if (curSlideIndex === totalSlides - 1) {
+    curSlideIndex = 0;
+  } else {
+    curSlideIndex++;
+  }
+
+  slideEngine(curSlideIndex);
+  activateDots(curSlideIndex);
+};
+// Prev Slide
+const prevSlide = function () {
+  if (curSlideIndex === 0) {
+    curSlideIndex = totalSlides - 1;
+  } else {
+    curSlideIndex--;
+  }
+  slideEngine(curSlideIndex);
+  activateDots(curSlideIndex);
+};
+
+btnRight.addEventListener('click', nextSlide);
+btnLeft.addEventListener('click', prevSlide);
+
+// Keyboard functionality for slider
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'ArrowLeft') prevSlide();
+  e.key === 'ArrowRight' && nextSlide();
+});
